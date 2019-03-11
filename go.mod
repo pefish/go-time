@@ -1,1 +1,1 @@
-module gitee.com/pefish/p-go-time
+module github.com/pefish/go-time
