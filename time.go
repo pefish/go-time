@@ -82,6 +82,14 @@ func (this *TimeClass) GetUtcTimeFromLocalStr(str string) time.Time {
 	return t.UTC()
 }
 
+func (this *TimeClass) GetUtcTimeFromOffsetStr(str string, offsetHours int, format string) time.Time {
+	t, err := time.ParseInLocation(this.getLayoutFromFormat(format), str, time.FixedZone("CST", offsetHours * 3600))
+	if err != nil {
+		panic(err)
+	}
+	return t.UTC()
+}
+
 func (this *TimeClass) GetUtcTimeFromIsoDateStr(str string, loc *time.Location) time.Time {
 	t, err := time.ParseInLocation(`2006-01-02T15:04:05Z`, str, loc)
 	if err != nil {
