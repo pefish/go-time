@@ -1,4 +1,4 @@
-package p_time
+package go_time
 
 import (
 	"testing"
