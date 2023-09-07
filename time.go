@@ -5,10 +5,10 @@ import (
 	"time"
 )
 
-type TimeUtil struct {
+type TimeType struct {
 }
 
-var TimeUtilInstance = &TimeUtil{}
+var TimeInstance = &TimeType{}
 
 type TimeUnit int
 
@@ -17,22 +17,22 @@ const (
 	TimeUnit_MILLISECOND TimeUnit = 2
 )
 
-func (tu *TimeUtil) CurrentTimestamp(unit TimeUnit) int64 {
+func (tu *TimeType) CurrentTimestamp(unit TimeUnit) int64 {
 	if unit == TimeUnit_SECOND {
 		return time.Now().Unix()
 	} else if unit == TimeUnit_MILLISECOND {
-		return int64(time.Now().Nanosecond() / 1000)
+		return time.Now().UnixMilli()
 	} else {
 		panic(errors.New(`unit error`))
 	}
 }
 
-func (tu *TimeUtil) TimeToStr(time time.Time, format string) string {
+func (tu *TimeType) TimeToStr(time time.Time, format string) string {
 	layout := tu.getLayoutFromFormat(format)
 	return time.Format(layout)
 }
 
-func (tu *TimeUtil) TimestampToStr(timestamp int64, format string, utc bool) string {
+func (tu *TimeType) TimestampToStr(timestamp int64, format string, utc bool) string {
 	tm := time.Unix(timestamp, 0)
 	if utc {
 		tm = tm.UTC()
@@ -40,7 +40,7 @@ func (tu *TimeUtil) TimestampToStr(timestamp int64, format string, utc bool) str
 	return tu.TimeToStr(tm, format)
 }
 
-func (tu *TimeUtil) getLayoutFromFormat(format string) string {
+func (tu *TimeType) getLayoutFromFormat(format string) string {
 	if format == `0000` {
 		return `2006`
 	} else if format == `000000000000` {
@@ -66,7 +66,7 @@ func (tu *TimeUtil) getLayoutFromFormat(format string) string {
 	}
 }
 
-func (tu *TimeUtil) OffsetStrToLocal(format string, str string, offsetHours int) (time.Time, error) {
+func (tu *TimeType) OffsetStrToLocal(format string, str string, offsetHours int) (time.Time, error) {
 	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.FixedZone("CST", offsetHours*3600))
 	if err != nil {
 		return time.Time{}, err
@@ -74,7 +74,7 @@ func (tu *TimeUtil) OffsetStrToLocal(format string, str string, offsetHours int)
 	return t.Local(), nil
 }
 
-func (tu *TimeUtil) MustOffsetStrToLocal(format string, str string, offsetHours int) time.Time {
+func (tu *TimeType) MustOffsetStrToLocal(format string, str string, offsetHours int) time.Time {
 	t, err := tu.OffsetStrToLocal(format, str, offsetHours)
 	if err != nil {
 		panic(err)
@@ -82,7 +82,7 @@ func (tu *TimeUtil) MustOffsetStrToLocal(format string, str string, offsetHours 
 	return t
 }
 
-func (tu *TimeUtil) StrToLocal(format string, str string, loc *time.Location) (time.Time, error) {
+func (tu *TimeType) StrToLocal(format string, str string, loc *time.Location) (time.Time, error) {
 	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, loc)
 	if err != nil {
 		return time.Time{}, err
@@ -90,7 +90,7 @@ func (tu *TimeUtil) StrToLocal(format string, str string, loc *time.Location) (t
 	return t.Local(), nil
 }
 
-func (tu *TimeUtil) MustStrToLocal(format string, str string, loc *time.Location) time.Time {
+func (tu *TimeType) MustStrToLocal(format string, str string, loc *time.Location) time.Time {
 	t, err := tu.StrToLocal(format, str, loc)
 	if err != nil {
 		panic(err)
@@ -98,7 +98,7 @@ func (tu *TimeUtil) MustStrToLocal(format string, str string, loc *time.Location
 	return t
 }
 
-func (tu *TimeUtil) UtcStrToLocal(format string, str string) (time.Time, error) {
+func (tu *TimeType) UtcStrToLocal(format string, str string) (time.Time, error) {
 	t, err := time.Parse(tu.getLayoutFromFormat(format), str)
 	if err != nil {
 		return time.Time{}, err
@@ -106,7 +106,7 @@ func (tu *TimeUtil) UtcStrToLocal(format string, str string) (time.Time, error) 
 	return t.Local(), nil
 }
 
-func (tu *TimeUtil) MustUtcStrToLocal(format string, str string) time.Time {
+func (tu *TimeType) MustUtcStrToLocal(format string, str string) time.Time {
 	t, err := tu.UtcStrToLocal(format, str)
 	if err != nil {
 		panic(err)
@@ -114,13 +114,13 @@ func (tu *TimeUtil) MustUtcStrToLocal(format string, str string) time.Time {
 	return t
 }
 
-func (tu *TimeUtil) LocalBeginTimeOfToday() time.Time {
+func (tu *TimeType) LocalBeginTimeOfToday() time.Time {
 	t := time.Now()
 	year, month, day := t.Date()
 	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 }
 
-func (tu *TimeUtil) LocalEndTimeOfToday() time.Time {
+func (tu *TimeType) LocalEndTimeOfToday() time.Time {
 	t := time.Now()
 	year, month, day := t.Date()
 	return time.Date(year, month, day+1, 0, 0, 0, 0, t.Location())
