@@ -27,6 +27,14 @@ func (tu *TimeType) CurrentTimestamp(unit TimeUnit) int64 {
 	}
 }
 
+func (tu *TimeType) TimestampToTime(timestamp int64, utc bool) time.Time {
+	tm := time.Unix(timestamp, 0)
+	if utc {
+		tm = tm.UTC()
+	}
+	return tm
+}
+
 func (tu *TimeType) TimeToStr(time time.Time, format string) string {
 	layout := tu.getLayoutFromFormat(format)
 	return time.Format(layout)
