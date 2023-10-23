@@ -46,4 +46,8 @@ func TestTimeType_StrToTimestamp(t *testing.T) {
 	go_test_.Equal(t, nil, err)
 	go_test_.Equal(t, "2023-10-23 11:50:46", TimeInstance.TimestampToStr(timestamp, "0000-00-00 00:00:00", false))
 
+	timestamp1, err := TimeInstance.StrToTimestamp("2023-10-23T11:50:46Z", false)
+	go_test_.Equal(t, nil, err)
+	go_test_.Equal(t, "2023-10-23 11:50:46", TimeInstance.TimestampToStr(timestamp1, "0000-00-00 00:00:00", false))
+	go_test_.Equal(t, "2023-10-23T11:50:46Z", TimeInstance.TimestampToStr(timestamp1, "0000-00-00T00:00:00Z", false))
 }
