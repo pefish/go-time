@@ -27,9 +27,9 @@ func (tu *TimeType) CurrentTimestamp(unit TimeUnit) int64 {
 	}
 }
 
-func (tu *TimeType) TimestampToTime(timestamp int64, utc bool) time.Time {
+func (tu *TimeType) TimestampToTime(timestamp int64, isToUtc bool) time.Time {
 	tm := time.Unix(timestamp, 0)
-	if utc {
+	if isToUtc {
 		tm = tm.UTC()
 	}
 	return tm
@@ -40,12 +40,16 @@ func (tu *TimeType) TimeToStr(time time.Time, format string) string {
 	return time.Format(layout)
 }
 
-func (tu *TimeType) TimestampToStr(timestamp int64, format string, utc bool) string {
+func (tu *TimeType) TimestampToStr(timestamp int64, format string, isToUtc bool) string {
 	tm := time.Unix(timestamp, 0)
-	if utc {
+	if isToUtc {
 		tm = tm.UTC()
 	}
 	return tu.TimeToStr(tm, format)
+}
+
+func (tu *TimeType) NowToUtcStr() string {
+	return tu.TimeToStr(time.Now().UTC(), "0000-00-00 00:00:00")
 }
 
 func (tu *TimeType) getLayoutFromFormat(format string) string {
@@ -74,7 +78,7 @@ func (tu *TimeType) getLayoutFromFormat(format string) string {
 	}
 }
 
-func (tu *TimeType) OffsetStrToLocal(format string, str string, offsetHours int) (time.Time, error) {
+func (tu *TimeType) OffsetStrToLocalTime(str string, format string, offsetHours int) (time.Time, error) {
 	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.FixedZone("CST", offsetHours*3600))
 	if err != nil {
 		return time.Time{}, err
@@ -82,40 +86,36 @@ func (tu *TimeType) OffsetStrToLocal(format string, str string, offsetHours int)
 	return t.Local(), nil
 }
 
-func (tu *TimeType) MustOffsetStrToLocal(format string, str string, offsetHours int) time.Time {
-	t, err := tu.OffsetStrToLocal(format, str, offsetHours)
+func (tu *TimeType) MustOffsetStrToLocalTime(str string, format string, offsetHours int) time.Time {
+	t, err := tu.OffsetStrToLocalTime(str, format, offsetHours)
 	if err != nil {
 		panic(err)
 	}
 	return t
 }
 
-func (tu *TimeType) StrToLocal(format string, str string, loc *time.Location) (time.Time, error) {
-	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, loc)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return t.Local(), nil
+func (tu *TimeType) LocalStrToLocalTime(str string, format string) (time.Time, error) {
+	return time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.Local)
 }
 
-func (tu *TimeType) MustStrToLocal(format string, str string, loc *time.Location) time.Time {
-	t, err := tu.StrToLocal(format, str, loc)
+func (tu *TimeType) MustLocalStrToLocalTime(str string, format string) time.Time {
+	t, err := tu.LocalStrToLocalTime(str, format)
 	if err != nil {
 		panic(err)
 	}
 	return t
 }
 
-func (tu *TimeType) UtcStrToLocal(format string, str string) (time.Time, error) {
-	t, err := time.Parse(tu.getLayoutFromFormat(format), str)
+func (tu *TimeType) UtcStrToLocalTime(str string, format string) (time.Time, error) {
+	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.UTC)
 	if err != nil {
 		return time.Time{}, err
 	}
 	return t.Local(), nil
 }
 
-func (tu *TimeType) MustUtcStrToLocal(format string, str string) time.Time {
-	t, err := tu.UtcStrToLocal(format, str)
+func (tu *TimeType) MustUtcStrToLocalTime(str string, format string) time.Time {
+	t, err := tu.UtcStrToLocalTime(str, format)
 	if err != nil {
 		panic(err)
 	}
@@ -123,13 +123,11 @@ func (tu *TimeType) MustUtcStrToLocal(format string, str string) time.Time {
 }
 
 func (tu *TimeType) LocalBeginTimeOfToday() time.Time {
-	t := time.Now()
-	year, month, day := t.Date()
-	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+	year, month, day := time.Now().Date()
+	return time.Date(year, month, day, 0, 0, 0, 0, time.Local)
 }
 
 func (tu *TimeType) LocalEndTimeOfToday() time.Time {
-	t := time.Now()
-	year, month, day := t.Date()
-	return time.Date(year, month, day+1, 0, 0, 0, 0, t.Location())
+	year, month, day := time.Now().Date()
+	return time.Date(year, month, day+1, 0, 0, 0, 0, time.Local)
 }
