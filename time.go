@@ -106,6 +106,37 @@ func (tu *TimeType) LocalStrToTimestamp(str string, format string) (int64, error
 	return t.Unix(), nil
 }
 
+func (tu *TimeType) StrToTime(str string, format string, isFromUtc bool, isToUtc bool) (time.Time, error) {
+	var loc *time.Location
+	if isFromUtc {
+		loc = time.UTC
+	} else {
+		loc = time.Local
+	}
+	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, loc)
+	if err != nil {
+		return time.Time{}, err
+	}
+	if isToUtc {
+		t = t.UTC()
+	}
+	return t, nil
+}
+
+func (tu *TimeType) StrToTimestamp(str string, format string, isFromUtc bool) (int64, error) {
+	var loc *time.Location
+	if isFromUtc {
+		loc = time.UTC
+	} else {
+		loc = time.Local
+	}
+	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, loc)
+	if err != nil {
+		return 0, err
+	}
+	return t.Unix(), nil
+}
+
 func (tu *TimeType) UtcStrToTimestamp(str string, format string) (int64, error) {
 	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.UTC)
 	if err != nil {
