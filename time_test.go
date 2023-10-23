@@ -44,3 +44,12 @@ func TestTimeType_UtcStrToLocalTime(t *testing.T) {
 func TestTimeType_NowToUtcStr(t *testing.T) {
 	fmt.Println(TimeInstance.NowToUtcStr())
 }
+
+func TestTimeType_StrToTimestamp(t *testing.T) {
+	timestamp, err := TimeInstance.StrToTimestamp("2023-10-23 11:50:46", "0000-00-00 00:00:00", false)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(timestamp)
+	fmt.Println(TimeInstance.TimestampToStr(timestamp, "0000-00-00 00:00:00", false))
+}
