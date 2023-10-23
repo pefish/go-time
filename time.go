@@ -98,6 +98,22 @@ func (tu *TimeType) LocalStrToLocalTime(str string, format string) (time.Time, e
 	return time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.Local)
 }
 
+func (tu *TimeType) LocalStrToTimestamp(str string, format string) (int64, error) {
+	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.Local)
+	if err != nil {
+		return 0, err
+	}
+	return t.Unix(), nil
+}
+
+func (tu *TimeType) UtcStrToTimestamp(str string, format string) (int64, error) {
+	t, err := time.ParseInLocation(tu.getLayoutFromFormat(format), str, time.UTC)
+	if err != nil {
+		return 0, err
+	}
+	return t.Unix(), nil
+}
+
 func (tu *TimeType) MustLocalStrToLocalTime(str string, format string) time.Time {
 	t, err := tu.LocalStrToLocalTime(str, format)
 	if err != nil {
