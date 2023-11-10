@@ -162,6 +162,14 @@ func (tu *TimeType) LocalStrToTimestamp(str string) (int64, error) {
 	return t.Unix(), nil
 }
 
+func (tu *TimeType) MustStrToTime(str string, isFromUtc bool, isToUtc bool) time.Time {
+	t, err := tu.StrToTime(str, isFromUtc, isToUtc)
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
 func (tu *TimeType) StrToTime(str string, isFromUtc bool, isToUtc bool) (time.Time, error) {
 	var loc *time.Location
 	if isFromUtc {
