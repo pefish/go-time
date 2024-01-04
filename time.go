@@ -1,7 +1,7 @@
 package go_time
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 	"time"
 )
 
@@ -23,7 +23,7 @@ func (tu *TimeType) CurrentTimestamp(unit TimeUnit) int64 {
 	} else if unit == TimeUnit_MILLISECOND {
 		return time.Now().UnixMilli()
 	} else {
-		panic(errors.New(`unit error`))
+		panic(errors.New(`Unit error.`))
 	}
 }
 
@@ -33,6 +33,16 @@ func (tu *TimeType) TimestampToTime(timestamp int64, isToUtc bool) time.Time {
 		tm = tm.UTC()
 	}
 	return tm
+}
+
+func (tu *TimeType) TimeToTimestamp(time time.Time, unit TimeUnit) int64 {
+	if unit == TimeUnit_SECOND {
+		return time.Unix()
+	} else if unit == TimeUnit_MILLISECOND {
+		return time.UnixMilli()
+	} else {
+		panic(errors.New(`Unit error.`))
+	}
 }
 
 func (tu *TimeType) TimeToStr(time time.Time, toFormat string) string {
