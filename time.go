@@ -129,6 +129,10 @@ func (tu *TimeType) getLayout(str string) (string, error) {
 		return `2006-01-02T15:04:05+08:00`, nil
 	}
 
+	if len(str) == 29 && str[4] == '-' && str[7] == '-' && str[10] == ' ' && str[13] == ':' && str[16] == ':' && str[19] == ' ' && str[20] == '+' && str[25] == ' ' {
+		return "2006-01-02 15:04:05 +0000 UTC", nil
+	}
+
 	return "", errors.New(`TimeStr format error.`)
 }
 
