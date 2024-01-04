@@ -1,6 +1,7 @@
 package go_time
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"time"
 )
@@ -133,7 +134,7 @@ func (tu *TimeType) getLayout(str string) (string, error) {
 		return "2006-01-02 15:04:05 +0000 UTC", nil
 	}
 
-	return "", errors.New(`TimeStr format error.`)
+	return "", errors.New(fmt.Sprintf("TimeStr <%s> format error.", str))
 }
 
 func (tu *TimeType) OffsetStrToLocalTime(str string, offsetHours int) (time.Time, error) {
