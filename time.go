@@ -12,39 +12,20 @@ type TimeType struct {
 
 var TimeInstance = &TimeType{}
 
-type TimeUnit int
-
-const (
-	TimeUnit_SECOND      TimeUnit = 1
-	TimeUnit_MILLISECOND TimeUnit = 2
-)
-
-func (tu *TimeType) CurrentTimestamp(unit TimeUnit) int64 {
-	if unit == TimeUnit_SECOND {
-		return time.Now().Unix()
-	} else if unit == TimeUnit_MILLISECOND {
-		return time.Now().UnixMilli()
-	} else {
-		panic(errors.New(`Unit error.`))
-	}
+func (tu *TimeType) CurrentTimestamp() int64 {
+	return time.Now().UnixMilli()
 }
 
 func (tu *TimeType) TimestampToTime(timestamp int64, isToUtc bool) time.Time {
-	tm := time.Unix(timestamp, 0)
+	tm := time.UnixMilli(timestamp)
 	if isToUtc {
 		tm = tm.UTC()
 	}
 	return tm
 }
 
-func (tu *TimeType) TimeToTimestamp(time time.Time, unit TimeUnit) int64 {
-	if unit == TimeUnit_SECOND {
-		return time.Unix()
-	} else if unit == TimeUnit_MILLISECOND {
-		return time.UnixMilli()
-	} else {
-		panic(errors.New(`Unit error.`))
-	}
+func (tu *TimeType) TimeToTimestamp(time time.Time) int64 {
+	return time.UnixMilli()
 }
 
 func (tu *TimeType) TimeToStr(time time.Time, toFormat string) string {
@@ -53,7 +34,7 @@ func (tu *TimeType) TimeToStr(time time.Time, toFormat string) string {
 }
 
 func (tu *TimeType) TimestampToStr(timestamp int64, format string, isToUtc bool) string {
-	tm := time.Unix(timestamp, 0)
+	tm := time.UnixMilli(timestamp)
 	if isToUtc {
 		tm = tm.UTC()
 	}
@@ -138,46 +119,6 @@ func (tu *TimeType) getLayout(str string) (string, error) {
 	return "", errors.New(fmt.Sprintf("TimeStr <%s> format error.", str))
 }
 
-func (tu *TimeType) OffsetStrToLocalTime(str string, offsetHours int) (time.Time, error) {
-	layout, err := tu.getLayout(str)
-	if err != nil {
-		return time.Time{}, err
-	}
-	t, err := time.ParseInLocation(layout, str, time.FixedZone("CST", offsetHours*3600))
-	if err != nil {
-		return time.Time{}, err
-	}
-	return t.Local(), nil
-}
-
-func (tu *TimeType) MustOffsetStrToLocalTime(str string, offsetHours int) time.Time {
-	t, err := tu.OffsetStrToLocalTime(str, offsetHours)
-	if err != nil {
-		panic(err)
-	}
-	return t
-}
-
-func (tu *TimeType) LocalStrToLocalTime(str string) (time.Time, error) {
-	layout, err := tu.getLayout(str)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return time.ParseInLocation(layout, str, time.Local)
-}
-
-func (tu *TimeType) LocalStrToTimestamp(str string) (int64, error) {
-	layout, err := tu.getLayout(str)
-	if err != nil {
-		return 0, err
-	}
-	t, err := time.ParseInLocation(layout, str, time.Local)
-	if err != nil {
-		return 0, err
-	}
-	return t.Unix(), nil
-}
-
 func (tu *TimeType) MustStrToTime(str string, isFromUtc bool, isToUtc bool) time.Time {
 	t, err := tu.StrToTime(str, isFromUtc, isToUtc)
 	if err != nil {
@@ -222,47 +163,7 @@ func (tu *TimeType) StrToTimestamp(str string, isFromUtc bool) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return t.Unix(), nil
-}
-
-func (tu *TimeType) UtcStrToTimestamp(str string) (int64, error) {
-	layout, err := tu.getLayout(str)
-	if err != nil {
-		return 0, err
-	}
-	t, err := time.ParseInLocation(layout, str, time.UTC)
-	if err != nil {
-		return 0, err
-	}
-	return t.Unix(), nil
-}
-
-func (tu *TimeType) MustLocalStrToLocalTime(str string) time.Time {
-	t, err := tu.LocalStrToLocalTime(str)
-	if err != nil {
-		panic(err)
-	}
-	return t
-}
-
-func (tu *TimeType) UtcStrToLocalTime(str string) (time.Time, error) {
-	layout, err := tu.getLayout(str)
-	if err != nil {
-		return time.Time{}, err
-	}
-	t, err := time.ParseInLocation(layout, str, time.UTC)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return t.Local(), nil
-}
-
-func (tu *TimeType) MustUtcStrToLocalTime(str string) time.Time {
-	t, err := tu.UtcStrToLocalTime(str)
-	if err != nil {
-		panic(err)
-	}
-	return t
+	return t.UnixMilli(), nil
 }
 
 func (tu *TimeType) LocalBeginTimeOfToday() time.Time {
