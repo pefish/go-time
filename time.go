@@ -166,12 +166,20 @@ func (tu *TimeType) StrToTimestamp(str string, isFromUtc bool) (int64, error) {
 	return t.UnixMilli(), nil
 }
 
-func (tu *TimeType) LocalBeginTimeOfToday() time.Time {
+func (tu *TimeType) BeginTimeOfToday(isToUtc bool) time.Time {
 	year, month, day := time.Now().Date()
-	return time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+	t := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+	if isToUtc {
+		t = t.UTC()
+	}
+	return t
 }
 
-func (tu *TimeType) LocalEndTimeOfToday() time.Time {
+func (tu *TimeType) EndTimeOfToday(isToUtc bool) time.Time {
 	year, month, day := time.Now().Date()
-	return time.Date(year, month, day+1, 0, 0, 0, 0, time.Local)
+	t := time.Date(year, month, day+1, 0, 0, 0, 0, time.Local)
+	if isToUtc {
+		t = t.UTC()
+	}
+	return t
 }
