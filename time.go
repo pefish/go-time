@@ -24,13 +24,13 @@ func (tu *TimeType) TimestampToTime(timestamp int64, isToUtc bool) time.Time {
 	return tm
 }
 
-func (tu *TimeType) TimeToTimestamp(time time.Time) int64 {
-	return time.UnixMilli()
+func (tu *TimeType) TimeToTimestamp(time_ time.Time) int64 {
+	return time_.UnixMilli()
 }
 
-func (tu *TimeType) TimeToStr(time time.Time, toFormat string) string {
+func (tu *TimeType) TimeToStr(time_ time.Time, toFormat string) string {
 	layout := tu.getLayoutFromFormat(toFormat)
-	return time.Format(layout)
+	return time_.Format(layout)
 }
 
 func (tu *TimeType) TimestampToStr(timestamp int64, format string, isToUtc bool) string {
@@ -166,8 +166,8 @@ func (tu *TimeType) StrToTimestamp(str string, isFromUtc bool) (int64, error) {
 	return t.UnixMilli(), nil
 }
 
-func (tu *TimeType) BeginTimeOfToday(isToUtc bool) time.Time {
-	year, month, day := time.Now().Date()
+func (tu *TimeType) BeginOfTime(time_ time.Time, isToUtc bool) time.Time {
+	year, month, day := time_.Date()
 	t := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
 	if isToUtc {
 		t = t.UTC()
@@ -175,8 +175,8 @@ func (tu *TimeType) BeginTimeOfToday(isToUtc bool) time.Time {
 	return t
 }
 
-func (tu *TimeType) EndTimeOfToday(isToUtc bool) time.Time {
-	year, month, day := time.Now().Date()
+func (tu *TimeType) EndOfTime(time_ time.Time, isToUtc bool) time.Time {
+	year, month, day := time_.Date()
 	t := time.Date(year, month, day+1, 0, 0, 0, 0, time.Local)
 	if isToUtc {
 		t = t.UTC()

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pefish/go-test"
 	"testing"
+	"time"
 )
 
 func TestTimeUtil_CurrentTimestamp(t *testing.T) {
@@ -45,4 +46,10 @@ func TestTimeType_StrToTimestamp(t *testing.T) {
 
 func TestTimeType_StrToTime(t *testing.T) {
 
+}
+
+func TestTimeType_BeginOfTime(t *testing.T) {
+	time_ := TimeInstance.BeginOfTime(time.Date(2023, 5, 12, 11, 11, 11, 0, time.Local), true)
+	str := TimeInstance.TimeToStr(time_, "0000-00-00 00:00:00")
+	go_test_.Equal(t, "2023-05-11 16:00:00", str)
 }
