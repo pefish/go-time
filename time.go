@@ -2,9 +2,10 @@ package go_time
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type TimeType struct {
@@ -12,12 +13,12 @@ type TimeType struct {
 
 var TimeInstance = &TimeType{}
 
-func (tu *TimeType) CurrentTimestamp() int64 {
-	return time.Now().UnixMilli()
+func (tu *TimeType) CurrentTimestamp() uint64 {
+	return uint64(time.Now().UnixMilli())
 }
 
-func (tu *TimeType) TimestampToTime(timestamp int64, isToUtc bool) time.Time {
-	tm := time.UnixMilli(timestamp)
+func (tu *TimeType) TimestampToTime(timestamp uint64, isToUtc bool) time.Time {
+	tm := time.UnixMilli(int64(timestamp))
 	if isToUtc {
 		tm = tm.UTC()
 	}
@@ -33,8 +34,8 @@ func (tu *TimeType) TimeToStr(time_ time.Time, toFormat string) string {
 	return time_.Format(layout)
 }
 
-func (tu *TimeType) TimestampToStr(timestamp int64, format string, isToUtc bool) string {
-	tm := time.UnixMilli(timestamp)
+func (tu *TimeType) TimestampToStr(timestamp uint64, format string, isToUtc bool) string {
+	tm := time.UnixMilli(int64(timestamp))
 	if isToUtc {
 		tm = tm.UTC()
 	}
