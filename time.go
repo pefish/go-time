@@ -8,45 +8,40 @@ import (
 	"github.com/pkg/errors"
 )
 
-type TimeType struct {
+func CurrentTimestamp() int64 {
+	return time.Now().UnixMilli()
 }
 
-var TimeInstance = &TimeType{}
-
-func (tu *TimeType) CurrentTimestamp() uint64 {
-	return uint64(time.Now().UnixMilli())
-}
-
-func (tu *TimeType) TimestampToTime(timestamp uint64, isToUtc bool) time.Time {
-	tm := time.UnixMilli(int64(timestamp))
+func TimestampToTime(timestamp int64, isToUtc bool) time.Time {
+	tm := time.UnixMilli(timestamp)
 	if isToUtc {
 		tm = tm.UTC()
 	}
 	return tm
 }
 
-func (tu *TimeType) TimeToTimestamp(time_ time.Time) int64 {
+func TimeToTimestamp(time_ time.Time) int64 {
 	return time_.UnixMilli()
 }
 
-func (tu *TimeType) TimeToStr(time_ time.Time, toFormat string) string {
-	layout := tu.getLayoutFromFormat(toFormat)
+func TimeToStr(time_ time.Time, toFormat string) string {
+	layout := getLayoutFromFormat(toFormat)
 	return time_.Format(layout)
 }
 
-func (tu *TimeType) TimestampToStr(timestamp uint64, format string, isToUtc bool) string {
+func TimestampToStr(timestamp int64, format string, isToUtc bool) string {
 	tm := time.UnixMilli(int64(timestamp))
 	if isToUtc {
 		tm = tm.UTC()
 	}
-	return tu.TimeToStr(tm, format)
+	return TimeToStr(tm, format)
 }
 
-func (tu *TimeType) NowToUtcStr() string {
-	return tu.TimeToStr(time.Now().UTC(), "0000-00-00 00:00:00")
+func NowToUtcStr() string {
+	return TimeToStr(time.Now().UTC(), "0000-00-00 00:00:00")
 }
 
-func (tu *TimeType) getLayoutFromFormat(format string) string {
+func getLayoutFromFormat(format string) string {
 	if format == `0000` {
 		return `2006`
 	} else if format == `000000000000` {
@@ -72,7 +67,7 @@ func (tu *TimeType) getLayoutFromFormat(format string) string {
 	}
 }
 
-func (tu *TimeType) getLayout(str string) (string, error) {
+func getLayout(str string) (string, error) {
 	if len(str) == 4 {
 		return `2006`, nil
 	}
@@ -120,22 +115,22 @@ func (tu *TimeType) getLayout(str string) (string, error) {
 	return "", errors.New(fmt.Sprintf("TimeStr <%s> format error.", str))
 }
 
-func (tu *TimeType) MustStrToTime(str string, isFromUtc bool, isToUtc bool) time.Time {
-	t, err := tu.StrToTime(str, isFromUtc, isToUtc)
+func MustStrToTime(str string, isFromUtc bool, isToUtc bool) time.Time {
+	t, err := StrToTime(str, isFromUtc, isToUtc)
 	if err != nil {
 		panic(err)
 	}
 	return t
 }
 
-func (tu *TimeType) StrToTime(str string, isFromUtc bool, isToUtc bool) (time.Time, error) {
+func StrToTime(str string, isFromUtc bool, isToUtc bool) (time.Time, error) {
 	var loc *time.Location
 	if isFromUtc {
 		loc = time.UTC
 	} else {
 		loc = time.Local
 	}
-	layout, err := tu.getLayout(str)
+	layout, err := getLayout(str)
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -149,14 +144,14 @@ func (tu *TimeType) StrToTime(str string, isFromUtc bool, isToUtc bool) (time.Ti
 	return t, nil
 }
 
-func (tu *TimeType) StrToTimestamp(str string, isFromUtc bool) (int64, error) {
+func StrToTimestamp(str string, isFromUtc bool) (int64, error) {
 	var loc *time.Location
 	if isFromUtc {
 		loc = time.UTC
 	} else {
 		loc = time.Local
 	}
-	layout, err := tu.getLayout(str)
+	layout, err := getLayout(str)
 	if err != nil {
 		return 0, err
 	}
@@ -167,7 +162,7 @@ func (tu *TimeType) StrToTimestamp(str string, isFromUtc bool) (int64, error) {
 	return t.UnixMilli(), nil
 }
 
-func (tu *TimeType) BeginOfTime(time_ time.Time, isToUtc bool) time.Time {
+func BeginOfTime(time_ time.Time, isToUtc bool) time.Time {
 	year, month, day := time_.Date()
 	t := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
 	if isToUtc {
@@ -176,7 +171,7 @@ func (tu *TimeType) BeginOfTime(time_ time.Time, isToUtc bool) time.Time {
 	return t
 }
 
-func (tu *TimeType) EndOfTime(time_ time.Time, isToUtc bool) time.Time {
+func EndOfTime(time_ time.Time, isToUtc bool) time.Time {
 	year, month, day := time_.Date()
 	t := time.Date(year, month, day+1, 0, 0, 0, 0, time.Local)
 	if isToUtc {
