@@ -29,10 +29,13 @@ func TimeToStr(time_ time.Time, toFormat string) string {
 	return time_.Format(layout)
 }
 
-func TimestampToStr(timestamp int64, format string, isToUtc bool) string {
+func TimestampToStr(timestamp int64, format string, isToUtc bool, offsetHours int) string {
 	tm := time.UnixMilli(int64(timestamp))
 	if isToUtc {
 		tm = tm.UTC()
+	}
+	if offsetHours > 0 {
+		tm = tm.Add(time.Duration(offsetHours) * time.Hour)
 	}
 	return TimeToStr(tm, format)
 }
